@@ -1,36 +1,119 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Smart Bookmark Manager
 
-## Getting Started
+A simple full-stack bookmark manager built using Next.js (App Router) and Supabase.  
+Users can securely log in using Google OAuth, manage private bookmarks, and see real-time updates across tabs.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🔗 Live Demo
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+https://smart-bookmark-m4t5j13j4-gunwant-patils-projects.vercel.app
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🛠 Tech Stack
 
-## Learn More
+- **Next.js (App Router)**
+- **Supabase**
+  - Authentication (Google OAuth)
+  - Postgres Database
+  - Row Level Security (RLS)
+  - Realtime subscriptions
+- **Tailwind CSS**
+- **Vercel** (Deployment)
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## ✅ Features
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- Google OAuth authentication (no email/password)
+- Users can add bookmarks (title + URL)
+- Bookmarks are private per user
+- Real-time updates across multiple tabs
+- Users can delete their own bookmarks
+- Fully deployed on Vercel
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🧱 Architecture Overview
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The application is built using Next.js App Router with client components for authentication and realtime interactions.
+
+- Authentication is handled using Supabase Google OAuth.
+- Bookmarks are stored in a Postgres table.
+- Privacy is enforced using Row Level Security (RLS).
+- Real-time updates are implemented using Supabase Realtime (Postgres change subscriptions).
+- No separate backend server is implemented. Supabase handles authentication, database, and realtime functionality as a Backend-as-a-Service (BaaS).
+
+---
+
+## 🔐 Data Privacy (Row Level Security)
+
+Privacy is enforced at the database level using RLS policies.
+
+Each bookmark row contains a `user_id` column.
+
+Policies ensure:
+
+- SELECT: `user_id = auth.uid()`
+- INSERT: `user_id = auth.uid()`
+- DELETE: `user_id = auth.uid()`
+
+This guarantees users can only view and modify their own bookmarks.
+
+---
+
+## 🔄 Real-Time Updates
+
+Real-time updates are implemented using Supabase's Postgres change subscriptions.
+
+The app subscribes to changes on the `bookmarks` table and re-fetches data whenever an INSERT or DELETE event occurs.
+
+This allows bookmarks to update instantly across multiple open tabs without refreshing the page.
+
+---
+
+## 🚀 Deployment
+
+The app is deployed on Vercel.
+
+Environment variables used:
+
+NEXT_PUBLIC_SUPABASE_URL
+NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+---
+
+Production OAuth configuration includes:
+
+- Supabase Site URL updated to Vercel domain
+- Redirect URLs configured in Supabase
+- Authorized origins configured in Google Cloud Console
+
+---
+
+## ⚠️ Challenges Faced
+
+1. Configuring Google OAuth correctly for production.
+2. Ensuring Row Level Security policies were correctly scoped.
+3. Properly handling realtime subscriptions to avoid duplicate listeners.
+4. Properly setting environment variables during deployment.
+
+Each issue was resolved by reviewing Supabase documentation and testing configuration changes incrementally.
+
+---
+
+## 📌 Future Improvements
+
+- Edit bookmark functionality
+- URL validation before insertion
+- Pagination for large bookmark lists
+- Optimistic UI updates
+- Bookmark categorization
+
+---
+
+## 📂 Repository
+
+https://github.com/gunwant29/smart-bookmark-app
+
